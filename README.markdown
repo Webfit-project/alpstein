@@ -1,4 +1,4 @@
-Route-Me: iOS map library (Alpstein fork)
+Alpstein : iOS map library (MapWF fork)
 -----------------------------------------
 
 Route-Me is an open source map library that runs natively on iOS.  It's designed to look and feel much like the built-in iOS map library, but it's entirely open, and works with any map source.
@@ -6,8 +6,6 @@ Route-Me is an open source map library that runs natively on iOS.  It's designed
 Currently, [OpenStreetMap][1], [OpenCycleMap][2], [OpenSeaMap][3], [MapQuest OSM][4], [MapQuest Open Aerial][5] and two offline, database-backed formats (DBMap and [MBTiles][6]) are supported as map sources.
 
 Please note that you are responsible for getting permission to use the map data, and for ensuring your use adheres to the relevant terms of use.
-
-MapBox users might be interested in the [MapBox fork][7], which includes lots of MapBox specific additions to Route-Me.
 
    [1]: http://www.openstreetmap.org/index.html
    [2]: http://www.opencyclemap.org/
@@ -42,39 +40,9 @@ See LicenseRouteMe.txt for license details. In any app that uses the Route-Me li
 
    [dl]: https://github.com/Alpstein/route-me/zipball/release
    
-   
-News, Support and Contributing
-------------------------------
-
-Join our [mailing list][list] for news and to communicate with project members and other users:
-
-To report bugs and help fix them, please use the [issue tracker][tracker]
-
-[list]: http://groups.google.com/group/route-me-map
-[tracker]: https://github.com/Alpstein/route-me/issues
 
 
 Major changes in this fork (Alpstein/route-me)
 ----------------------------------------------
 
-* RMMapView and RMMapContents have been merged into one file
-
-* The map uses an UIScrollView with a CATiledLayer for better performance
-
-* Tile cache refactoring
-
-* Tile source refactoring
-
-* Support for tile sources with multiple layers (e.g. OpenSeaMap)
-
-* Support for multiple tile sources on the map
-
-* Numerous performance improvements
-
-* Markers have been refactored into a MKMapView-like system, with annotations and on-demand markers
-
-* Automatic annotation clustering
-
-* Snapshots from the map
-
-* Requires at least iOS 4.0 and Xcode 4.3
+* add infowindow with marker
