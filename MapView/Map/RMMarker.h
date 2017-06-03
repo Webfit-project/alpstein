@@ -36,6 +36,10 @@
 {
     // Text label, visible by default if it has content, but not required.
     UIView  *label;
+    NSString *title;
+    NSString *ido;
+    NSString *desc;
+    
     UIColor *textForegroundColor;
     UIColor *textBackgroundColor;
 }
@@ -44,7 +48,9 @@
 
 /** A custom label for the marker. The label is shown when first set. */
 @property (nonatomic, retain) UIView  *label;
-
+@property (nonatomic, retain) NSString *title;
+@property (nonatomic, retain) NSString *ido;
+@property (nonatomic, retain) NSString *desc;
 /** The marker object's label text foreground color. */
 @property (nonatomic, retain) UIColor *textForegroundColor;
 
@@ -59,7 +65,7 @@
 /** Initializes and returns a newly allocated marker object using the specified image.
 *   @param image An image to use for the marker. */
 - (id)initWithUIImage:(UIImage *)image;
-
+- (void) createInfoWindow:(NSString *)_title desc:(NSString *)_desc ido:(NSString *)_ido;
 /** Initializes and returns a newly allocated marker object using the specified image and anchor point.
 *   @param image An image to use for the marker.
 *   @param anchorPoint A point representing a range from `0` to `1` in each of the height and width coordinate space, normalized to the size of the image, at which to place the image.
@@ -84,6 +90,8 @@
 
 // changes the labelView to a UILabel with supplied #text and default marker font, changing this marker's text foreground/background colors for this and future text strings; modifies position as in #changeLabelUsingText:position.
 - (void)changeLabelUsingText:(NSString *)text position:(CGPoint)position font:(UIFont *)font foregroundColor:(UIColor *)textColor backgroundColor:(UIColor *)backgroundColor;
+
+- (void)changeLabelUsingTextMoreInfo:(NSString *)text position:(CGPoint)position font:(UIFont *)font foregroundColor:(UIColor *)textColor backgroundColor:(UIColor *)backgroundColor;
 
 /** @name Showing and Hiding Labels */
 

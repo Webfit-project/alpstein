@@ -35,7 +35,9 @@
 {
     CLLocationCoordinate2D coordinate;
     NSString *title;
-
+    NSString *ido;
+    NSString *desc;
+    
     CGPoint position;
     RMProjectedPoint projectedLocation;
     RMProjectedRect  projectedBoundingBox;
@@ -59,7 +61,8 @@
 
 /** The annotation's title. */
 @property (nonatomic, retain) NSString *title;
-
+@property (nonatomic, retain) NSString *ido;
+@property (nonatomic, retain) NSString *desc;
 /** Storage for arbitrary data. */
 @property (nonatomic, retain) id userInfo;
 

@@ -38,6 +38,9 @@
 
 @synthesize coordinate;
 @synthesize title;
+@synthesize desc;
+@synthesize ido;
+
 @synthesize userInfo;
 @synthesize annotationType;
 @synthesize annotationIcon, badgeIcon;
@@ -86,6 +89,8 @@
 - (void)dealloc
 {
     self.title        = nil;
+    self.desc = nil;
+    self.ido = nil;
     self.userInfo     = nil;
     self.layer        = nil;
     [[self.mapView quadTree] removeAnnotation:self];
