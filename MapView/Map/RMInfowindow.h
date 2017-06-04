@@ -16,7 +16,6 @@
 @property (strong, nonatomic) IBOutlet UILabel *_title;
 @property (strong, nonatomic) IBOutlet UILabel *_desc;
 @property (strong, nonatomic) IBOutlet UIButton *_infoBT;
-- (IBAction)goInfo:(id)sender;
 - (UIView *)createInfoWindow;
 - (void)setTitle:(NSString *)title;
 - (void)setDesc:(NSString *)desc;@end

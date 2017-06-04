@@ -202,7 +202,7 @@
     
     CGRect frame = CGRectMake(position.x-10, position.y-45, [self bounds].size.width+20, [self bounds].size.height+20);
 
-    
+   
     RMInfowindow *infowindow = [[RMInfowindow alloc] initWithFrame:frame];
 
 
@@ -211,6 +211,9 @@
     [infowindow setDesc:_desc];
    self.ido = _ido;
     
+    CGRect frame2 = CGRectMake(position.x-[iwView bounds].size.width/2, position.y-120, [iwView bounds].size.width, [iwView bounds].size.height);
+    
+    iwView.frame = frame2;
     [self setLabel:iwView];
     
     

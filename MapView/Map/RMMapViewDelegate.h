@@ -120,6 +120,8 @@ typedef enum : NSUInteger {
 /** Tells the delegate when the user taps the layer for an annotation. 
 *   @param annotation The annotation that was tapped. 
 *   @param map The map view. */
+- (void)tapOnButton:(NSString *)name;
+
 - (void)tapOnAnnotation:(RMAnnotation *)annotation onMap:(RMMapView *)map;
 
 /** Tells the delegate when the user double-taps the layer for an annotation.

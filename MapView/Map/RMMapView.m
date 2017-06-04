@@ -115,6 +115,7 @@
     BOOL _delegateHasSingleTapOnMap;
     BOOL _delegateHasSingleTapTwoFingersOnMap;
     BOOL _delegateHasLongSingleTapOnMap;
+    BOOL _delegateHasTapOnButton;
     BOOL _delegateHasTapOnAnnotation;
     BOOL _delegateHasDoubleTapOnAnnotation;
     BOOL _delegateHasTapOnLabelForAnnotation;
@@ -454,14 +455,17 @@
 
 - (id <RMMapViewDelegate>)delegate
 {
+     NSLog(@"delegate sans amis");
 	return _delegate;
 }
 
 - (void)setDelegate:(id <RMMapViewDelegate>)aDelegate
 {
+    NSLog(@"on lance le setdelegate");
     if (_delegate == aDelegate)
         return;
 
+    NSLog(@"onset le bordel");
     _delegate = aDelegate;
 
     _delegateHasBeforeMapMove = [_delegate respondsToSelector:@selector(beforeMapMove:byUser:)];
@@ -478,6 +482,7 @@
     _delegateHasSingleTapTwoFingersOnMap = [_delegate respondsToSelector:@selector(singleTapTwoFingersOnMap:at:)];
     _delegateHasLongSingleTapOnMap = [_delegate respondsToSelector:@selector(longSingleTapOnMap:at:)];
 
+    _delegateHasTapOnButton = [_delegate respondsToSelector:@selector(tapOnButton:name:)];
     _delegateHasTapOnAnnotation = [_delegate respondsToSelector:@selector(tapOnAnnotation:onMap:)];
     _delegateHasDoubleTapOnAnnotation = [_delegate respondsToSelector:@selector(doubleTapOnAnnotation:onMap:)];
     _delegateHasTapOnLabelForAnnotation = [_delegate respondsToSelector:@selector(tapOnLabelForAnnotation:onMap:)];
@@ -1101,7 +1106,6 @@
     _mapScrollView.maximumZoomScale = exp2f([self maxZoom]);
     _mapScrollView.contentOffset = CGPointMake(0.0, 0.0);
     _mapScrollView.clipsToBounds = NO;
-
     _tiledLayersSuperview = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, contentSize.width, contentSize.height)];
     _tiledLayersSuperview.userInteractionEnabled = NO;
 
@@ -1430,16 +1434,25 @@
 - (void)handleSingleTap:(UIGestureRecognizer *)recognizer
 {
     CALayer *hit = [_overlayView overlayHitTest:[recognizer locationInView:self]];
-
+    
     if ( ! hit)
     {
         [self singleTapAtPoint:[recognizer locationInView:self]];
         return;
     }
+    
+    
 
     CALayer *superlayer = [hit superlayer];
+    
+    
 
-    // See if tap was on a marker or marker label and send delegate protocol method
+
+    if([[superlayer superlayer] name] != nil)
+    {
+        NSLog(@"on tape sur le bouton %@",[[superlayer superlayer] name]);
+        [self tapOnButton:[[superlayer superlayer] name]];
+    }
     if ([hit isKindOfClass:[RMMarker class]])
     {
         [self tapOnAnnotation:[((RMMarker *)hit) annotation] atPoint:[recognizer locationInView:self]];
@@ -1605,6 +1618,15 @@
         [self didEndDragAnnotation:_draggedAnnotation];
         [_draggedAnnotation release]; _draggedAnnotation = nil;
     }
+}
+
+// button
+
+- (void)tapOnButton:(NSString*)name
+{
+  
+        [_delegate tapOnButton:name];
+ 
 }
 
 // Overlay
@@ -2406,17 +2428,20 @@
 
 - (void)correctPositionOfAllAnnotationsIncludingInvisibles:(BOOL)correctAllAnnotations animated:(BOOL)animated
 {
+   // NSLog(@"debut correctposition");
     // Prevent blurry movements
     [CATransaction begin];
 
     // Synchronize marker movement with the map scroll view
     if (animated && !_mapScrollView.isZooming)
     {
+     //   NSLog(@"il y a une animation");
         [CATransaction setAnimationTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
         [CATransaction setAnimationDuration:0.30];
     }
     else
     {
+       // NSLog(@"pas d'animation");
         [CATransaction setDisableActions:YES];
     }
 
@@ -2426,8 +2451,11 @@
 
     if (self.quadTree)
     {
+        // NSLog(@"quadtree");
         if (!correctAllAnnotations || _mapScrollViewIsZooming)
         {
+         //   NSLog(@"mapscroll ou =correctallanotations");
+            
             for (RMAnnotation *annotation in _visibleAnnotations)
                 [self correctScreenPosition:annotation animated:animated];
 
@@ -2452,9 +2480,12 @@
                                                     andProjectedClusterMarkerSize:RMProjectedSizeMake(self.clusterMarkerSize.width * _metersPerPixel, self.clusterMarkerSize.height * _metersPerPixel)
                                                                 findGravityCenter:self.positionClusterMarkersAtTheGravityCenter];
         NSMutableSet *previousVisibleAnnotations = [[NSMutableSet alloc] initWithSet:_visibleAnnotations];
-
+        // NSLog(@"avant le for");
         for (RMAnnotation *annotation in annotationsToCorrect)
         {
+            if(_delegateHasLayerForAnnotation == false) {
+                NSLog(@"le delegate deconne");
+            }
             if (annotation.layer == nil && _delegateHasLayerForAnnotation)
                 annotation.layer = [_delegate mapView:self layerForAnnotation:annotation];
             if (annotation.layer == nil)
@@ -2474,7 +2505,7 @@
 
             [previousVisibleAnnotations removeObject:annotation];
         }
-
+       // NSLog(@"for 2");
         for (RMAnnotation *annotation in previousVisibleAnnotations)
         {
             if ( ! annotation.isUserLocationAnnotation)
@@ -2490,13 +2521,14 @@
                 [_visibleAnnotations removeObject:annotation];
             }
         }
-
+        
         [previousVisibleAnnotations release];
-
+//NSLog(@"fin juste avant le debug");
 //        RMLog(@"%d annotations on screen, %d total", [overlayView sublayersCount], [annotations count]);
     }
     else
     {
+  //      NSLog(@"pas de quadtree");
         CALayer *lastLayer = nil;
 
         @synchronized (_annotations)
@@ -2606,6 +2638,7 @@
 
 - (void)addAnnotation:(RMAnnotation *)annotation
 {
+    NSLog(@"on add l'annotation");
     @synchronized (_annotations)
     {
         [_annotations addObject:annotation];
@@ -2614,17 +2647,27 @@
 
     if (_enableClustering)
     {
+        NSLog(@"enableclustering");
         [self correctPositionOfAllAnnotations];
     }
     else
     {
+        NSLog(@"else enable");
         [self correctScreenPosition:annotation animated:NO];
-
-        if (annotation.layer == nil && [annotation isAnnotationOnScreen] && _delegateHasLayerForAnnotation)
+        if(annotation.layer == nil)
+            NSLog(@"annotation.layer  = nil");
+        if([annotation isAnnotationOnScreen])
+            NSLog(@"isannotationonscreen");
+        if( _delegateHasLayerForAnnotation)
+            NSLog(@" _delegateHasLayerForAnnotation");
+        if (annotation.layer == nil && [annotation isAnnotationOnScreen] && _delegateHasLayerForAnnotation) {
+            NSLog(@"on lance layerforannotation");
             annotation.layer = [_delegate mapView:self layerForAnnotation:annotation];
+        }
 
         if (annotation.layer)
         {
+            NSLog(@"visible annotation");
             [_overlayView addSublayer:annotation.layer];
             [_visibleAnnotations addObject:annotation];
         }
